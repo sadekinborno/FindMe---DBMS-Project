@@ -1,0 +1,185 @@
+Admin:
+    users:
+        Edit user details
+        view user activity/logs(alerts sent, last login)
+
+     Emergency Alerts
+You have a section for this, but no content yet.
+
+Suggestions:
+
+List all emergency alerts (active and resolved)
+Filter/search by type, user, date, status
+View alert details (location on map, user info, time, details)
+Mark alert as resolved
+Assign alert to a responder/service
+
+
+
+Report System
+
+    filter in reports
+    reports total in dashboard
+
+
+
+Friends System
+    User Profiles: View friend's profile (bio, posts, status).
+    Online Status: Show if a friend is online.
+    Mutual Friends: Show mutual friends in requests/suggestions.
+    Friend Suggestions: Based on mutual friends or location.
+    Block/Unblock: Manage blocked users.
+    Friend Chat: Direct chat with friends.
+    Notifications: For new requests, accepted requests, etc.
+    Activity Feed: See what friends are up to (mark safe, new posts, etc.).
+    Privacy Controls: Who can send requests, see your profile, etc.
+
+
+
+
+// Near the top of your script.js (e.g., after line 4)
+let socket; // Declare socket variable
+
+// Define a function to register all your socket event listeners
+function registerSocketEventListeners() {
+    if (!socket) return;
+
+    // It's good practice to remove old listeners before adding new ones
+    // to the same socket object, though here we are often getting a new socket object.
+    // For clarity and safety, especially if this function were called multiple times
+    // on the exact same socket instance:
+    socket.off('friendChatMessage');
+    socket.off('emergencyAlert');
+    socket.off('chatMessage');
+    // Add .off() for any other socket event types you listen to
+
+    // Now, add your listeners. This is the detailed one for friend chat:
+    socket.on('friendChatMessage', (data) => {
+      console.log('[Socket Event] Received friendChatMessage (on current socket):', data);
+      const currentUser = getCurrentUser();
+
+      if (!currentUser || !currentUser.id) {
+        console.warn('[Socket Event] Cannot process: current user not identified.');
+        return;
+      }
+
+      console.log(`[Socket Event] Current User ID: ${currentUser.id} (Type: ${typeof currentUser.id})`);
+      console.log(`[Socket Event] Data Sender ID: ${data.sender_id} (Type: ${typeof data.sender_id})`);
+      console.log(`[Socket Event] Data Receiver ID: ${data.receiver_id} (Type: ${typeof data.receiver_id})`);
+
+      if (currentChatFriend && currentChatFriend.id) {
+        console.log(`[Socket Event] Current Chat Friend ID: ${currentChatFriend.id} (Type: ${typeof currentChatFriend.id})`);
+        console.log(`[Socket Event] Current Chat Friend Name: ${currentChatFriend.name}`);
+
+        const sentByCurrentUserToCurrentChat = (data.sender_id == currentUser.id && data.receiver_id == currentChatFriend.id);
+        const receivedFromCurrentChatByCurrentUser = (data.sender_id == currentChatFriend.id && data.receiver_id == currentUser.id);
+
+        console.log(`[Socket Event] Condition: Sent by current user to current chat? ${sentByCurrentUserToCurrentChat}`);
+        console.log(`[Socket Event] Condition: Received from current chat by current user? ${receivedFromCurrentChatByCurrentUser}`);
+
+        if (sentByCurrentUserToCurrentChat || receivedFromCurrentChatByCurrentUser) {
+          console.log(`[Socket Event] SUCCESS: Message is for the active chat with ${currentChatFriend.name}. Reloading messages.`);
+          loadFriendMessages(currentChatFriend.id);
+        } else {
+          console.log('[Socket Event] INFO: Message is not for the currently active chat window, though a chat is open.');
+          if (data.receiver_id == currentUser.id) {
+             console.log(`[Socket Event] NOTIFICATION: New message for YOU from user ${data.sender_id}, but not the active chat.`);
+          }
+        }
+      } else if (data.receiver_id == currentUser.id) {
+        console.log(`[Socket Event] NOTIFICATION: New message for YOU from user ${data.sender_id}. No chat window open.`);
+      } else {
+        console.log('[Socket Event] INFO: Received message not directly for this user or no active chat context matches.');
+      }
+    });
+
+    // Add your other existing socket.on listeners here, for example:
+    // (You'll need to move their definitions from where they are now into this function)
+    socket.on('emergencyAlert', function(data) {
+      // ... your existing emergencyAlert handler code ...
+      // Example:
+      if(data.user_id !== getCurrentUser()?.id) { // Ensure to use getCurrentUser() if 'user' var is not reliable here
+        displayMessage(data);
+        // ... rest of your emergencyAlert logic
+      }
+    });
+
+    socket.on('chatMessage', function(data) {
+      // ... your existing global chatMessage handler code ...
+      // Example:
+      const chatMessages = document.getElementById('chat-messages');
+      // ... rest of your chatMessage logic
+    });
+
+    // Add any other socket.on(...) listeners your application uses.
+}
+
+// Define a function to initialize or re-initialize the socket connection
+function initializeAndConnectSocket(userId = null) {
+    if (socket && socket.connected) {
+        console.log(`Disconnecting existing socket (SID: ${socket.id}) before reconnecting.`);
+        socket.disconnect();
+    }
+
+    const connectionOptions = {};
+    if (userId) {
+        connectionOptions.query = { user_id: userId.toString() };
+    }
+
+    socket = io.connect('http://localhost:5000', connectionOptions);
+    console.log(userId ? `Socket connected with user_id: ${userId} (SID: ${socket.id})` : `Anonymous socket connected (SID: ${socket.id})`);
+
+    // CRITICAL: Register event listeners on the new/current socket instance
+    registerSocketEventListeners();
+}
+
+// Initial anonymous connection when the script loads
+initializeAndConnectSocket();
+
+// ...
+// ... (Keep your existing code like map initialization, UI handlers, etc.)
+// ...
+
+// THEN, MODIFY your login check block (around line 880):
+// Remove the old `socket = io.connect(...)` lines from here.
+// Check if the user is logged in
+const user = JSON.parse(localStorage.getItem('user')); // This 'user' variable is fine for this block's logic
+
+if (user && user.id) {
+    // User is logged in
+    document.getElementById('signin').style.display = 'none';
+    document.getElementById('signup').style.display = 'none';
+    document.getElementById('account').style.display = 'block';
+
+    // Re-initialize socket with user_id if it's not already connected with this user_id
+    // Check the current socket's query options
+    const currentSocketUserId = socket && socket.io && socket.io.opts && socket.io.opts.query ? socket.io.opts.query.user_id : null;
+    if (currentSocketUserId !== user.id.toString()) {
+        console.log(`User ${user.id} logged in. Re-initializing socket.`);
+        initializeAndConnectSocket(user.id);
+    } else {
+        console.log(`User ${user.id} already connected with correct socket.`);
+    }
+
+} else {
+    // User is not logged in
+    document.getElementById('signin').style.display = 'block';
+    document.getElementById('signup').style.display = 'block';
+    document.getElementById('account').style.display = 'none';
+
+    // If socket was connected with a user_id, re-initialize as anonymous
+    const currentSocketUserId = socket && socket.io && socket.io.opts && socket.io.opts.query ? socket.io.opts.query.user_id : null;
+    if (currentSocketUserId) {
+        console.log('User logged out or not found. Re-initializing socket as anonymous.');
+        initializeAndConnectSocket();
+    }
+}
+
+// IMPORTANT:
+// You must REMOVE the original global definitions of:
+// - socket.on('friendChatMessage', ...) (the one around line 485 with detailed logs)
+// - socket.on('emergencyAlert', ...) (the one around line 20)
+// - socket.on('chatMessage', ...) (the one around line 800)
+// Because their logic is now inside the `registerSocketEventListeners` function.
+// ...
+// ... (Rest of your script.js) ...

@@ -1,0 +1,111 @@
+body {
+  background: #f7f8fa;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fire-login-container {
+  width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fire-login-box {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 32px rgba(0,0,0,0.10);
+  padding: 36px 32px 28px 32px;
+  min-width: 320px;
+  max-width: 350px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.fire-login-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 28px;
+  font-size: 1.2rem;
+  color: #d7263d;
+  font-weight: bold;
+}
+
+.fire-login-logo i {
+  font-size: 2rem;
+  color: #d7263d;
+}
+
+#fire-login-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+#fire-login-form label {
+  font-size: 0.98rem;
+  color: #333;
+  margin-bottom: 2px;
+  font-weight: 500;
+}
+
+#fire-login-form input[type="email"],
+#fire-login-form input[type="password"] {
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  outline: none;
+  transition: border 0.2s;
+}
+
+#fire-login-form input:focus {
+  border: 1.5px solid #d7263d;
+}
+
+.fire-login-btn {
+  margin-top: 8px;
+  background: #d7263d;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 11px 0;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.fire-login-btn:hover {
+  background: #a91c2b;
+}
+
+.fire-login-error {
+  margin-top: 14px;
+  color: #d7263d;
+  font-size: 0.98rem;
+  text-align: center;
+  min-height: 22px;
+}
+
+/* Responsive */
+@media (max-width: 500px) {
+  .fire-login-box {
+    min-width: 90vw;
+    max-width: 95vw;
+    padding: 22px 8vw 18px 8vw;
+  }
+}

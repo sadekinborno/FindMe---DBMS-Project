@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FindMe</title>
+  <!-- Include Socket.IO -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.min.js"></script>
+  <link rel="stylesheet" href="styles.css">
+  <!-- Include Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <!-- Leaflet Control Geocoder CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+</head>
+<body>
+  <!-- Map Container -->
+  <div id="map"></div>
+
+  <!-- Buttons on Top of the Map -->
+  <div class="map-buttons">
+    <div class="helpful-keys">
+      <button id="tutorial">
+        <i class="fas fa-question-circle"></i> Tutorial
+      </button>
+      <button id="friends-btn">
+        <i class="fas fa-user-friends"></i> Friends
+      </button>
+      <button id="report">
+        <i class="fas fa-flag"></i> Report
+      </button>
+      <button id="response">
+        <i class="fas fa-bullhorn"></i> Response
+      </button>
+    </div>
+    <div class="auth-buttons">
+      <button id="signin">
+        <i class="fas fa-sign-in-alt"></i> Sign In
+      </button>
+      <button id="signup">
+        <i class="fas fa-user-plus"></i> Sign Up
+      </button>
+      <div class="notifications-dropdown">
+        <button id="notifications">
+          <i class="fas fa-bell"></i> Notifications <span id="notification-count" class="badge">0</span>
+        </button>
+        <div id="notification-menu" class="dropdown-menu hidden">
+          <h4>Notifications</h4>
+          <div id="notification-messages"></div>
+          <button id="clear-notifications">Clear All</button>
+          <button id="mark-as-read">Mark Read</button>
+        </div>
+      </div>
+      <!-- Show this button only if the user is logged in -->
+     <button id="account" class="auth-button" style="display: none;">
+      <i class="fas fa-user-circle"></i> Account
+     </button>
+    </div>
+  </div>
+
+  <!-- Seek Help Button -->
+  <button id="seek-help">Seek Help</button>
+  <!-- Mark Safe Button (Initially hidden) -->
+  <button id="mark-safe" style="display: none;">Mark Safe</button>
+
+  <!-- Seek Help Popup -->
+  <div id="seek-help-popup" class="popup">
+    <div class="popup-content">
+      <h3>Select Emergency Type(s)</h3>
+      <div class="emergency-options">
+    <button class="emergency-btn" data-emergency="teased">
+      <i class="fas fa-user-injured"></i> Teased
+    </button>
+    <button class="emergency-btn" data-emergency="attacked">
+      <i class="fas fa-fist-raised"></i> Attacked
+    </button>
+    <button class="emergency-btn" data-emergency="kidnapped">
+      <i class="fas fa-user-times"></i> Kidnapped
+    </button>
+    <button class="emergency-btn" data-emergency="fire">
+      <i class="fas fa-fire"></i> Fire
+    </button>
+    <button class="emergency-btn" data-emergency="accident">
+      <i class="fas fa-car-crash"></i> Accident
+    </button>
+    <button class="emergency-btn" data-emergency="other">
+      <i class="fas fa-question-circle"></i> Other
+    </button>
+  </div>
+    <textarea id="emergency-details" placeholder="Additional details (optional)"></textarea>
+    <button id="confirm-seek-help">Seek Help</button>
+    <button id="cancel-seek-help">Cancel</button>
+  </div>
+</div>
+
+  <!-- Chat Button -->
+  <button id="emergency-chat-button" class="chat-button">
+    <img src="images/chat1.png" alt="Chat" />
+  </button>
+
+<!-- Emergency Chat Window -->
+<!-- Emergency Chat Window (Messenger Style) -->
+<div id="emergency-chat-window" class="emergency-chat-modal hide">
+  <div class="emergency-chat-content">
+    <!-- Header -->
+    <div class="emergency-chat-header">
+      <h3>Emergency Alerts</h3>
+      <button id="close-emergency-chat" class="close-btn">&times;</button>
+    </div>
+    
+    <!-- Main Content Area -->
+    <div class="emergency-chat-body">
+      <!-- Left Sidebar - Alert List -->
+      <div class="emergency-alerts-sidebar">
+        <div class="alerts-header">
+          <h4>Active Alerts</h4>
+          <span id="alerts-count" class="count-badge">0</span>
+        </div>
+        <div id="emergency-alerts-list" class="alerts-list">
+          <!-- Alert items will be populated here -->
+        </div>
+      </div>
+      
+      <!-- Right Side - Chat Area -->
+      <div class="emergency-chat-area">
+        <div id="no-alert-selected" class="no-selection">
+          <div class="no-selection-icon">
+            <i class="fas fa-comments"></i>
+          </div>
+          <h4>Select an Alert</h4>
+          <p>Choose an emergency alert from the left to start chatting with nearby helpers</p>
+        </div>
+        
+        <div id="active-chat-container" class="active-chat" style="display: none;">
+          <!-- Chat Header -->
+          <div class="chat-room-header">
+            <div class="alert-info">
+              <div class="alert-icon">
+                <i id="chat-alert-icon" class="fas fa-exclamation-triangle"></i>
+              </div>
+              <div class="alert-details">
+                <h4 id="chat-alert-title">Emergency Type</h4>
+                <p id="chat-alert-location">Location</p>
+              </div>
+            </div>
+            <div class="participants-info">
+              <i class="fas fa-users"></i>
+              <span id="participants-count">0 helpers</span>
+            </div>
+          </div>
+          
+          <!-- Messages Area -->
+          <div id="emergency-chat-messages" class="chat-messages-area">
+            <!-- Messages will be populated here -->
+          </div>
+          
+          <!-- Input Area -->
+          <div class="chat-input-area">
+            <input type="text" id="emergency-chat-input" placeholder="Type a message to helpers...">
+            <button id="send-emergency-chat">
+              <i class="fas fa-paper-plane"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  <!-- Friends System Modal -->
+<div id="friends-modal" class="popup friends-popup">
+  <div class="friends-modal-content">
+    <aside class="friends-sidebar">
+      <button class="sidebar-btn active" data-section="friends-list" data-tooltip="Friends">
+        <i class="fas fa-user-friends"></i>
+      </button>
+      <button class="sidebar-btn" data-section="friend-requests" data-tooltip="Requests">
+        <i class="fas fa-user-plus"></i>
+      </button>
+      <button class="sidebar-btn" data-section="friends-feed" data-tooltip="Feed">
+        <i class="fas fa-newspaper"></i>
+      </button>
+      <button class="sidebar-btn" data-section="blocked-users" data-tooltip="Blocked">
+        <i class="fas fa-user-slash"></i>
+      </button>
+    </aside>
+    <main class="friends-main">
+      <!-- Friends List Section -->
+      <section id="friends-list-section" class="friends-section">
+        <h3>Your Friends</h3>
+        <input type="text" id="search-friends" placeholder="Search friends...">
+        <div id="friends-list" class="friends-list"></div>
+      </section>
+      <!-- Friend Requests Section -->
+      <section id="friend-requests-section" class="friends-section" style="display:none;">
+        <h3>Friend Requests</h3>
+        <div id="incoming-requests" class="requests-list"></div>
+        <input type="text" id="add-friend-search" placeholder="Search users...">
+        <div id="add-friend-results" class="add-friend-results"></div>
+      </section>
+      <!-- Feed Section (Placeholder) -->
+      <section id="friends-feed-section" class="friends-section" style="display:none;">
+        <h3>Friends Feed</h3>
+        <div class="feed-placeholder">Coming soon...</div>
+      </section>
+      <!-- Blocked Users -->
+       <section id="blocked-users-section" class="friends-section" style="display:none;">
+          <h3>Blocked Users</h3>
+          <div id="blocked-users-list" class="blocked-users-list"></div>
+        </section>
+      <!-- Friend Chat Section (Initially hidden) -->
+      <section id="friend-chat-section" class="friends-section" style="display:none;">
+        <button id="back-to-friends" class="back-btn">Back</button>
+        <div id="chat-with-friend-header"></div>
+        <div id="friend-chat-messages" class="chat-messages"></div>
+        <div class="chat-input">
+          <input type="text" id="friend-chat-input" placeholder="Type a message...">
+          <button id="send-friend-chat">Send</button>
+        </div>
+      </section>
+    </main>
+    <button id="close-friends-modal" class="close-btn">&times;</button>
+  </div>
+</div>
+
+
+  <!-- Report Window -->
+   <div id="report-popup" class="popup report-popup">
+  <div class="popup-content">
+    <h3>Report an Issue</h3>
+    <textarea id="report-text" placeholder="Describe the issue..." style="width:100%;height:100px;margin-bottom:15px;"></textarea>
+    <div>
+      <button id="submit-report">Submit</button>
+      <button id="cancel-report">Cancel</button>
+    </div>
+  </div>
+</div>
+
+
+  <!-- Recenter Button -->
+  <button id="recenter-btn" title="Recenter to your location">📍</button>
+
+  <!-- Leaflet JavaScript -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- Leaflet Control Geocoder JavaScript -->
+  <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+  <!-- Custom JavaScript -->
+  <script src="script.js"></script>
+  <script sr="auth.js"></script>
+</body>
+</html>

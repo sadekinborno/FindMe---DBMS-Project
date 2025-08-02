@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Medical Service Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="medical-login.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+  <div class="medical-login-container">
+    <div class="medical-login-box">
+      <div class="medical-login-logo">
+        <i class="fas fa-ambulance"></i>
+        <span>Medical Service Login</span>
+      </div>
+      <form id="medical-login-form">
+        <label for="medical-email">Email</label>
+        <input type="email" id="medical-email" name="email" required placeholder="Enter medical service email">
+        <label for="medical-password">Password</label>
+        <input type="password" id="medical-password" name="password" required placeholder="Enter password">
+        <button type="submit">Login</button>
+        <div id="medical-login-error" class="error-message"></div>
+      </form>
+    </div>
+  </div>
+  <script src="medical-login.js"></script>
+</body>
+</html>

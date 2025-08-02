@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Medical Service Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="medical.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+  <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.min.js"></script>
+  <script src="medical.js"></script>
+</head>
+<body>
+  <div class="medical-dashboard">
+    <!-- Header -->
+    <header class="medical-header">
+      <div class="medical-logo">
+        <i class="fas fa-ambulance"></i>
+        <span>Central Medical Service</span>
+      </div>
+      <div class="header-controls">
+        <div class="medical-status online">
+          <i class="fas fa-circle"></i> Online
+        </div>
+        <div class="medical-profile">
+          <i class="fas fa-user-circle"></i>
+        </div>
+        <button class="logout-btn" id="medical-logout-btn">
+          <i class="fas fa-sign-out-alt"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside class="medical-sidebar">
+      <nav>
+        <ul>
+          <li class="active"><i class="fas fa-bell"></i> <span>Alerts</span></li>
+          <li><i class="fas fa-map"></i> <span>Map</span></li>
+          <li><i class="fas fa-users"></i> <span>Team</span></li>
+          <li><i class="fas fa-history"></i> <span>History</span></li>
+          <li><i class="fas fa-cog"></i> <span>Settings</span></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="medical-main">
+      <!-- Alerts Feed -->
+      <section class="medical-alerts">
+        <div class="alerts-header">
+          <h2>Live Accident Alerts</h2>
+          <span class="alerts-count">0 alerts</span>
+        </div>
+        <ul class="alerts-list collapsed">
+          <!-- Alerts will be added here dynamically -->
+        </ul>
+        <div class="alerts-expand-controls">
+          <button class="expand-btn" id="expand-alerts">
+            <span class="expand-text">Show All Alerts</span>
+            <i class="fas fa-chevron-down"></i>
+          </button>
+        </div>
+      </section>
+
+      <!-- Map & Details -->
+      <section class="medical-map-details">
+        <div class="medical-map" id="medical-map">
+          <div id="osm-map" style="width:100%;height:100%;border-radius:12px;"></div>
+        </div>
+        <div class="medical-details">
+          <h3>Alert Details</h3>
+          <div class="details-content">
+            <p>No alert selected.</p>
+          </div>
+        </div>
+      </section>
+
+        <!-- Team Section (Coming Soon) -->
+        <section class="medical-team" style="display: none;">
+          <div class="coming-soon-container">
+            <div class="coming-soon-icon">
+              <i class="fas fa-users"></i>
+            </div>
+            <h3>Medical Team Management</h3>
+            <p>This feature is coming soon! You'll be able to:</p>
+            <ul class="feature-list">
+              <li><i class="fas fa-check"></i> View medical staff and availability</li>
+              <li><i class="fas fa-check"></i> Manage duty schedules</li>
+              <li><i class="fas fa-check"></i> Track team certifications</li>
+              <li><i class="fas fa-check"></i> Coordinate emergency responses</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- History Section (Coming Soon) -->
+        <section class="medical-history" style="display: none;">
+          <div class="coming-soon-container">
+            <div class="coming-soon-icon">
+              <i class="fas fa-history"></i>
+            </div>
+            <h3>Medical Response History</h3>
+            <p>This feature is coming soon! You'll be able to:</p>
+            <ul class="feature-list">
+              <li><i class="fas fa-check"></i> View past medical responses</li>
+              <li><i class="fas fa-check"></i> Track patient outcomes</li>
+              <li><i class="fas fa-check"></i> Generate medical reports</li>
+              <li><i class="fas fa-check"></i> Analyze response effectiveness</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- Settings Section (Coming Soon) -->
+        <section class="medical-settings" style="display: none;">
+          <div class="coming-soon-container">
+            <div class="coming-soon-icon">
+              <i class="fas fa-cog"></i>
+            </div>
+            <h3>Medical Service Settings</h3>
+            <p>This feature is coming soon! You'll be able to:</p>
+            <ul class="feature-list">
+              <li><i class="fas fa-check"></i> Update medical service profile</li>
+              <li><i class="fas fa-check"></i> Configure emergency protocols</li>
+              <li><i class="fas fa-check"></i> Manage equipment inventory</li>
+              <li><i class="fas fa-check"></i> Set up service coverage areas</li>
+            </ul>
+          </div>
+        </section>
+    </main>
+  </div>
+</body>
+</html>

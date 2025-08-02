@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fire Service Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="fire-login.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+  <div class="fire-login-container">
+    <div class="fire-login-box">
+      <div class="fire-login-logo">
+        <i class="fas fa-fire-extinguisher"></i>
+        <span>Fire Service Login</span>
+      </div>
+      <form id="fire-login-form">
+        <label for="fire-email">Email</label>
+        <input type="email" id="fire-email" name="email" required placeholder="Enter fire service email">
+        <label for="fire-password">Password</label>
+        <input type="password" id="fire-password" name="password" required placeholder="Enter password">
+        <button type="submit" class="fire-login-btn"><i class="fas fa-sign-in-alt"></i> Login</button>
+      </form>
+      <div id="fire-login-error" class="fire-login-error"></div>
+    </div>
+  </div>
+  <script src="fire-login.js"></script>
+</body>
+</html>
