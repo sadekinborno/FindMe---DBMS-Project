@@ -1,11 +1,22 @@
-# Database credentials and sensitive information
-*.env
-config.py
-instance/
+# ============================================
+# FindMe Project - Git Ignore Rules
+# ============================================
+
+# Environment variables and sensitive data
+.env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+config.py
+instance/
+
+# Database files and backups
+*.db
+*.sqlite
+*.sqlite3
+*.sql.backup
+database_backups/
 
 # Python
 __pycache__/
@@ -36,15 +47,18 @@ env/
 ENV/
 env.bak/
 venv.bak/
+.venv/
 
-# IDE
+# IDE and Editor files
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
+.sublime-project
+.sublime-workspace
 
-# OS
+# Operating System
 .DS_Store
 .DS_Store?
 ._*
@@ -52,10 +66,14 @@ venv.bak/
 .Trashes
 ehthumbs.db
 Thumbs.db
+desktop.ini
 
 # Logs
 *.log
 logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
 # Runtime data
 pids
@@ -63,14 +81,90 @@ pids
 *.seed
 *.pid.lock
 
-# Node modules (if any)
-node_modules/
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
 
-# Database files
-*.db
-*.sqlite
-*.sqlite3
+# nyc test coverage
+.nyc_output
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# parcel-bundler cache (https://parceljs.org/)
+.cache
+.parcel-cache
+
+# next.js build output
+.next
+
+# nuxt.js build output
+.nuxt
+
+# vuepress build output
+.vuepress/dist
+
+# Serverless directories
+.serverless
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
+# TernJS port file
+.tern-port
 
 # Temporary files
 *.tmp
 *.temp
+temp/
+tmp/
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Application specific
+uploads/
+user_uploads/
+static/uploads/
+media/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Documentation builds
+docs/_build/
+site/
+
+# MySQL specific
+*.cnf
+
+# SSL certificates (if any)
+*.pem
+*.key
+*.crt
+*.csr
+
+# Production specific files
+production.ini
+production.cfg
